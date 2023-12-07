@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import './App.css';
+import AnecdoteOfTheDay from '../components/AnecdoteOfTheDay';
+import AnecdoteWithMostVotes from '../components/AnecdoteWithMostVotes';
 
 function App() {
   const anecdotes = [
@@ -16,6 +18,21 @@ function App() {
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState([...anecdotes].fill(0));
 
+  const maxVote = Math.max(...votes);
+  const bestAnecdote = anecdotes[votes.indexOf(maxVote)];
+
+  const handleRandom = (length) => {
+    return Math.floor(Math.random() * length);
+  };
+
+  const handleSelect = () => {
+    let random = handleRandom(anecdotes.length);
+    while (random === selected) {
+      random = handleRandom(anecdotes.length);
+    }
+    setSelected(random);
+  };
+
   const handleVote = () => {
     const newVotes = [...votes];
     newVotes[selected] += 1;
@@ -24,17 +41,13 @@ function App() {
 
   return (
     <div>
-      {console.log(votes)}
-      <p>{anecdotes[selected]}</p>
-      <p>{votes[selected]}</p>
-      <button
-        onClick={() =>
-          setSelected(Math.floor(Math.random() * anecdotes.length))
-        }
-      >
-        Next anecdote
-      </button>
-      <button onClick={handleVote}>Vote</button>
+      <AnecdoteOfTheDay
+        anecdote={anecdotes[selected]}
+        vote={votes[selected]}
+        handleSelect={handleSelect}
+        handleVote={handleVote}
+      />
+      <AnecdoteWithMostVotes bestAnecdote={bestAnecdote} maxVote={maxVote} />
     </div>
   );
 }
